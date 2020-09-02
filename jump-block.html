@@ -1,0 +1,135 @@
+<html>
+  <head>
+    <style>
+      body {
+        text-align: center;
+        font-family: Arial;
+      }
+      #c {
+        border: 1px #000 solid;
+      }
+      #controls {
+        text-align: left;
+      }
+    </style>
+    <title>Jump Block</title>
+  </head>
+  
+  <body>
+    <h1>Jump Block</h1>
+    <canvas id="c" width="300px" height="150px">Your browser does not support this game</canvas>
+    <div id="controls">
+      <h3>Controls:</h3>
+    
+      <li>Click: Jump</li>
+      <li>You can jump 3 times in a row</li> <br><br>
+      Beta 0.0.1
+    </div>
+    <script>
+      alert("I recommend that it be played on a cell phone")
+    
+      //declarations
+      const c = document.getElementById("c")
+      const ctx = c.getContext("2d")
+      
+      let gameData = {
+        state: "onTitle"
+      }
+      
+      //programming some basic functions
+      c.addEventListener("click", clicking)
+      
+      function clicking() {
+        if (gameData.state == "onTitle") {
+          gameData.state = "onGame"
+        }
+        if (gameData.state == "onGame" && player.jumps > 0) {
+          player.gravity = -10
+          player.jumps -= 1
+        }
+      }
+      
+      var player = {
+        x: 30,
+        y: 0,
+        gravity: 0,
+        jumps: 3
+      }
+      
+      var ground = {
+        y: 130
+      }
+      
+      function groundWorks() {
+        ctx.fillRect(0, ground.y, 300, 20)
+      }
+      setInterval(groundWorks, 10)
+      
+      function playerWorks() {
+        ctx.clearRect(player.x, player.y, 15, 15)
+        if (player.y < 115 && player.gravity < 10) {
+          player.gravity += 1
+        }
+        player.y += player.gravity
+        if (player.y > 115) {
+          player.gravity -= 1
+          player.y = 114
+          player.jumps = 3
+        }
+        ctx.fillRect(player.x, player.y, 15, 15)
+      }
+      var playerLoop = setInterval(playerWorks, 40)
+      
+      //programming the blocks coming
+      
+      var block1 = {
+        x: 320,
+        y: 105,
+        w: 25,
+        h: 25
+      }
+      
+      function block1Works() {
+        ctx.clearRect(block1.x, block1.y, block1.w, block1.h)
+        block1.x -= 1
+       ctx.fillRect(block1.x, block1.y, block1.w, block1.h)
+       
+       if (block1.x + block1.w < 0) {
+         block1.w = Math.floor(Math.random() * 50)
+         block1.h = Math.floor(Math.random() * 50)
+         if (block1.w < 5 || block1.h < 5) {
+           block1.w = Math.floor(Math.random() * 50)
+           block1.h = Math.floor(Math.random() * 50)
+         }
+         block1.x = 300
+         block1.y = 130 - block1.h
+         score += 10
+       }
+      
+      if (player.x + 15 > block1.x &&
+      block1.x + block1.w > player.x &&
+      player.y + 15 > block1.y &&
+      block1.y + block1.h > player.y) {
+        ded()
+      }
+      }
+      var block1Loop = setInterval(block1Works, 5)
+      
+      var score = 0
+      
+      function scoreWorks() {
+        ctx.clearRect(0,0,300,20)
+        ctx.fillText(score, 5,10)
+      }
+      var scoreLoop = setInterval(scoreWorks, 10)
+      
+      function ded() {
+        clearInterval(playerLoop)
+        clearInterval(block1Loop)
+        clearInterval(scoreLoop)
+        
+        alert("Refresh the page to restart")
+      }
+    </script>
+  </body>
+</html>
